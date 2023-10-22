@@ -1,0 +1,40 @@
+type Query {
+  todos: [Todo]
+  todo(id: ID!): Todo
+}
+
+type Mutation {
+  createTodo(createTodoInput: CreateTodoInput): Todo
+  updateTodo(updateTodoInput: UpdateTodoInput): Todo
+  deleteTodo(id: ID!): Todo
+}
+
+type Subscription {
+  todoCreated: Todo
+  todoUpdated: Todo
+  todoDeleted: Todo
+}
+
+type Owner {
+  id: Int!
+  name: String!
+  todos: [Todo!]
+}
+
+type Todo {
+  id: Int
+  title: String
+  done: Boolean
+  owner: Owner
+}
+
+input CreateTodoInput {
+  title: String!
+  done: Boolean
+}
+
+input UpdateTodoInput {
+  id: Int!
+  title: String
+  done: Boolean
+}
