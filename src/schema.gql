@@ -1,0 +1,59 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type todos {
+  id: ID!
+  title: String!
+  done: Boolean!
+  owner: user!
+}
+
+type user {
+  id: ID!
+  username: String!
+  password: String!
+  todos: [todos!]!
+}
+
+type SigninResponse {
+  access_token: String!
+  username: String!
+}
+
+type SignupResponse {
+  username: String!
+}
+
+type Query {
+  getAllTodos: [todos!]!
+  getTodo(id: ID!): todos!
+}
+
+type Mutation {
+  createTodo(createTodoInput: CreateTodoInput!): todos!
+  updateTodo(updateTodoInput: UpdateTodoInput!): todos!
+  deleteTodo(id: ID!): todos!
+  signup(signupUserInput: SignupUserInput!): SignupResponse!
+  signin(signinUserInput: SigninUserInput!): SigninResponse!
+}
+
+input CreateTodoInput {
+  title: String!
+}
+
+input UpdateTodoInput {
+  id: ID!
+  title: String
+  done: Boolean!
+}
+
+input SignupUserInput {
+  username: String!
+  password: String!
+}
+
+input SigninUserInput {
+  username: String!
+  password: String!
+}

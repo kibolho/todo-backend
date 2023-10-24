@@ -4,11 +4,33 @@
 
 ### Installation
 
-`npm install`
+```bash
+  yarn
+```
+
+### Docker up
+
+```bash
+  docker-compose up
+```
+
+### Run migrations
+
+```bash
+yarn migration:run
+```
+
+### Run seeds
+
+```bash
+yarn seed:run
+```
 
 ### Run Development
 
-`npm run start:dev`
+```bash
+yarn start:dev
+``````
 
 ### Graphql Playground
 
@@ -17,8 +39,9 @@ When the application is running, you can go to [http://localhost:3000/graphql](h
 ### Requirements
 
 - Node.js v16+
-- npm
+- yarn
 - NestJS CLI
+- Docker
 
 ## Project Requirements
 

@@ -1,8 +1,17 @@
-import { IsOptional, Length } from 'class-validator';
-import { UpdateTodoInput } from '../../graphql.schema';
+import { Field, ID, InputType } from '@nestjs/graphql';
+import { IsOptional, IsUUID, Length } from 'class-validator';
 
-export class UpdateTodoDto extends UpdateTodoInput {
+@InputType()
+export class UpdateTodoInput {
+  @Field(() => ID)
+  @IsUUID('4', { each: true })
+  id: string;
+
   @Length(2)
+  @Field({ nullable: true })
   @IsOptional()
   title?: string;
+
+  @Field()
+  done: boolean;
 }

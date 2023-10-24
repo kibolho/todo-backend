@@ -1,71 +1,53 @@
-import { ParseIntPipe, UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
-import { PubSub } from "graphql-subscriptions";
-import { Todo } from "../graphql.schema";
-import { TodosGuard } from "./todos.guard";
+import { UseGuards } from "@nestjs/common";
+import { Args, ID, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { CurrentUser } from "src/auth/get-current-user.decorator";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { UserEntity } from "src/users/users.entity";
+import { CreateTodoInput } from "./dto/create-todo.dto";
+import { UpdateTodoInput } from "./dto/update-todo.dto";
+import { TodoEntity } from "./todos.entity";
 import { TodosService } from "./todos.service";
-import { CreateTodoDto } from "./dto/create-todo.dto";
-import { UpdateTodoDto } from "./dto/update-todo.dto";
 
-const pubSub = new PubSub();
-
-@Resolver("Todo")
+@Resolver(() => TodoEntity)
+@UseGuards(JwtAuthGuard)
 export class TodosResolver {
-  constructor(private readonly todosService: TodosService) {}
+  constructor(private todoService: TodosService) {}
 
-  @Query("todos")
-  @UseGuards(TodosGuard)
-  async getTodos() {
-    return this.todosService.findAll();
+  @Query(() => [TodoEntity])
+  async getAllTodos(@CurrentUser() user: UserEntity): Promise<TodoEntity[]> {
+    return this.todoService.getAllTodos(user);
   }
 
-  @Query("todo")
-  async findOneById(
-    @Args("id", ParseIntPipe)
-    id: number
-  ): Promise<Todo> {
-    return this.todosService.findOneById(id);
+  @Query(() => TodoEntity)
+  async getTodo(
+    @Args("id", { type: () => ID }) id: string,
+    @CurrentUser() user: UserEntity,
+  ): Promise<TodoEntity> {
+    return this.todoService.getTodo(id, user);
   }
 
-  @Mutation("createTodo")
-  async create(@Args("createTodoInput") args: CreateTodoDto): Promise<Todo> {
-    const createdTodo = await this.todosService.create(args);
-    pubSub.publish("todoCreated", { todoCreated: createdTodo });
-    return createdTodo;
+  @Mutation(() => TodoEntity)
+  async createTodo(
+    @Args("createTodoInput") createTodoInput: CreateTodoInput,
+    @CurrentUser() user: any
+  ): Promise<TodoEntity> {
+    return this.todoService.createTodo(createTodoInput, user);
   }
 
-  @Mutation("updateTodo")
+  @Mutation(() => TodoEntity)
   async updateTodo(
-    @Args("updateTodoInput") 
-    args: UpdateTodoDto
-  ): Promise<Todo> {
-    const updatedTodo = await this.todosService.update(args);
-    pubSub.publish("todoUpdated", { todoUpdated: updatedTodo });
-    return updatedTodo;
+    @CurrentUser() user: UserEntity,
+    @Args("updateTodoInput") updateTodoInput: UpdateTodoInput
+  ): Promise<TodoEntity> {
+    return this.todoService.updateTodoStatus(updateTodoInput, user);
   }
 
-  @Mutation("deleteTodo")
+  @Mutation(() => TodoEntity)
+  // @UseGuards(JwtAuthGuard)
   async deleteTodo(
-    @Args("id", ParseIntPipe)
-    id: number
-  ): Promise<Todo> {
-    const result = await this.todosService.delete(id);
-    pubSub.publish("todoDeleted", { todoDeleted: result });
-    return result;
-  }
-
-  @Subscription("todoCreated")
-  todoCreated() {
-    return pubSub.asyncIterator("todoCreated");
-  }
-
-  @Subscription("todoUpdated")
-  todoUpdated() {
-    return pubSub.asyncIterator("todoUpdated");
-  }
-
-  @Subscription("todoDeleted")
-  todoDeleted() {
-    return pubSub.asyncIterator("todoDeleted");
+    @Args("id", { type: () => ID }) id: string,
+    @CurrentUser() user: UserEntity
+  ): Promise<TodoEntity> {
+    return this.todoService.deleteTodo(id, user);
   }
 }

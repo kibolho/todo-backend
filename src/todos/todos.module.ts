@@ -1,11 +1,12 @@
 import { Module } from "@nestjs/common";
-import { OwnersModule } from "../owners/owners.module";
-import { TodoOwnerResolver } from "./todos-owner.resolver";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AuthModule } from "src/auth/auth.module";
+import { TodoEntity } from "./todos.entity";
 import { TodosResolver } from "./todos.resolver";
 import { TodosService } from "./todos.service";
 
 @Module({
-  imports: [OwnersModule],
-  providers: [TodosService, TodosResolver, TodoOwnerResolver],
+  imports: [TypeOrmModule.forFeature([TodoEntity]), AuthModule],
+  providers: [TodosService, TodosResolver],
 })
-export class TodoModule {}
+export class TodosModule {}
