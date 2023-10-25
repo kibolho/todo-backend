@@ -11,6 +11,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { TypeOrmConfigService } from "./database/typeorm-config.service";
 import { DataSource, DataSourceOptions } from "typeorm";
 import authConfig from "./config/auth.config";
+import appConfig from "./config/app.config";
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import authConfig from "./config/auth.config";
       isGlobal: true,
       load: [
         databaseConfig,
-        authConfig
+        authConfig,
+        appConfig,
       ],
       envFilePath: ['.env'],
     }),

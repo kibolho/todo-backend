@@ -1,3 +1,7 @@
+export type AppConfig = {
+  port: number;
+};
+
 export type AuthConfig = {
   secret?: string;
   expires?: string;
@@ -23,6 +27,7 @@ export type DatabaseConfig = {
 };
 
 export type AllConfigType = {
+  app: AppConfig;
   auth: AuthConfig;
   database: DatabaseConfig;
 };
